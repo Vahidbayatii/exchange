@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صرافی دیجیتال - مدیریت حمید حاجی اسفندیاری</title>
+<style>
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #111827;
+    --bg-card: #1a2332;
+    --bg-hover: #1e2a3a;
+    --accent: #00d4aa;
+    --accent-dim: rgba(0,212,170,0.15);
+    --danger: #ff4757;
+    --danger-dim: rgba(255,71,87,0.15);
+    --warning: #ffa502;
+    --text-primary: #e8ecf1;
+    --text-secondary: #8892a4;
+    --text-muted: #4a5568;
+    --border: #2a3a4e;
+    --green: #00d4aa;
+    --red: #ff4757;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .font-mono { font-family: 'Courier New', monospace; }
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent), #00a88a);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    height: 100%;
+  }
+  .nav-tab {
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-size: 14px;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: inherit;
+  }
+  .nav-tab:hover { color: var(--text-primary); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .balance-pill {
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .admin-badge {
+    background: var(--warning);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    min-height: calc(100vh - 64px);
+  }
+  .sidebar {
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    padding: 20px 0;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding: 0 12px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: right;
+    font-family: inherit;
+  }
+  .sidebar-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--accent-dim); color: var(--accent); }
+  .sidebar-item .icon { font-size: 18px; width: 24px; text-align: center; }
+  .main {
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .stat-change {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .stat-change.up { color: var(--green); }
+  .stat-change.down { color: var(--red); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    padding: 10px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  th {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:hover td { background: var(--bg-hover); }
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-group { display: flex; gap: 8px; }
+  .market-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .market-row:hover { background: var(--bg-hover); }
+  .market-pair {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .market-price {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+  }
+  .market-change {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .market-change.up { background: rgba(0,212,170,0.15); color: var(--green); }
+  .market-change.down { background: rgba(255,71,87,0.15); color: var(--red); }
+  .chart-area {
+    height: 200px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    gap: 3px;
+  }
+  .chart-bar {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    min-height: 4px;
+  }
+  .chart-bar:hover { opacity: 1; }
+  .order-form { display: flex; flex-direction: column; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .form-input {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input.error { border-color: var(--danger); }
+  .form-error {
+    font-size: 11px;
+    color: var(--danger);
+    display: none;
+  }
+  .form-error.show { display: block; }
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 16px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: #000; font-weight: 600; }
+  .tab:hover:not(.active) { color: var(--text-primary); }
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .admin-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .admin-stat-label { font-size: 12px; color: var(--text-secondary); }
+  .admin-stat-value { font-size: 22px; font-weight: 700; }
+  .admin-stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .status-dot.active { background: var(--green); }
+  .status-dot.inactive { background: var(--text-muted); }
+  .status-dot.suspended { background: var(--danger); }
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    z-index: 1000;
+    transition: transform 0.3s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 480px;
+    width: 90%;
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">₿</div>
+    صرافی دیجیتال
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard')">داشبورد</button>
+    <button class="nav-tab" onclick="showPage('trade')">معاملات</button>
+    <button class="nav-tab" onclick="showPage('wallet')">کیف پول</button>
+    <button class="nav-tab" onclick="showPage('admin')">پنل مدیریت</button>
+  </nav>
+  <div class="header-right">
+    <span class="admin-badge">👑 مدیر: حمید حاجی اسفندیاری</span>
+    <div class="balance-pill">💰 ۱۲۵,۴۳۰,۰۰۰ تومان</div>
+    <div class="avatar">👤</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">منوی اصلی</div>
+      <button class="sidebar-item active" onclick="showPage('dashboard')">
+        <span class="icon">📊</span> داشبورد
+      </button>
+      <button class="sidebar-item" onclick="showPage('trade')">
+        <span class="icon">📈</span> بازار معاملات
+      </button>
+      <button class="sidebar-item" onclick="showPage('wallet')">
+        <span class="icon">💼</span> کیف پول
+      </button>
+      <button class="sidebar-item" onclick="showPage('history')">
+        <span class="icon">📋</span> تاریخچه معاملات
+      </button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">مدیریت</div>
+      <button class="sidebar-item" onclick="showPage('admin')">
+        <span class="icon">⚙️</span> پنل مدیریت
+      </button>
+      <button class="sidebar-item" onclick="showPage('users')">
+        <span class="icon">👥</span> مدیریت کاربران
+      </button>
+      <button class="sidebar-item" onclick="showPage('settings')">
+        <span class="icon">🔧</span> تنظیمات سیستم
+      </button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">وضعیت سیستم</div>
+      <div style="padding: 0 12px; font-size: 13px; color: var(--text-secondary);">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span>وضعیت سرور</span>
+          <span style="color:var(--green);">🟢 فعال</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span>آخرین بلاک</span>
+          <span class="font-mono">#19,482,371</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span>بازده ۲۴h</span>
+          <span class="font-mono" style="color:var(--green);">+۲.۳۴%</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">حجم معاملات ۲۴h</div>
+          <div class="stat-value">۴۸.۲ میلیارد تومان</div>
+          <div class="stat-change up">▲ ۱۲.۵٪ نسبت به دیروز</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">کاربران فعال</div>
+          <div class="stat-value">۳,۸۴۷</div>
+          <div class="stat-change up">▲ ۲۳۴ امروز</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">درگاه‌های فعال</div>
+          <div class="stat-value">۱۲</div>
+          <div class="stat-change">همه سربارار</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">سقف خزانه</div>
+          <div class="stat-value">۲.۴ میلیارد تومان</div>
+          <div class="stat-change down">▼ ۰.۸٪</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">نمودار حجم معاملات BTC/USDT</span>
+            <span class="live-dot"></span>
+          </div>
+          <div class="chart-area" id="chart-btc"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">سریع‌ترین قیمت‌ها</span>
+          </div>
+          <div id="quick-prices"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">آخرین معاملات</span>
+          <button class="btn btn-outline btn-sm">مشاهده همه</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>رقم حساب</th><th>نوع</th><th>جفت</th><th>مقدار</th><th>قیمت</th><th>وضعیت</th></tr></thead>
+            <tbody id="recent-trades"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-trade">
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+        <div class="stat-card">
+          <div class="stat-label">BTC</div>
+          <div class="stat-value" style="font-size:18px;">۶۷,۴۲۰,۰۰۰</div>
+          <div class="stat-change up">▲ ۱.۲٪</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">ETH</div>
+          <div class="stat-value" style="font-size:18px;">۳,۸۵۰,۰۰۰</div>
+          <div class="stat-change up">▲ ۰.۸٪</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">BNB</div>
+          <div class="stat-value" style="font-size:18px;">۵۲۰,۰۰۰</div>
+          <div class="stat-change down">▼ ۰.۳٪</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">SOL</div>
+          <div class="stat-value" style="font-size:18px;">۱۴۵,۰۰۰</div>
+          <div class="stat-change up">▲ ۳.۱٪</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">خرید ارز دیجیتال</span>
+            <span class="live-dot"></span>
+          </div>
+          <div class="order-form">
+            <div class="form-group">
+              <label class="form-label">جفت معامله</label>
+              <select class="form-input" id="buy-pair">
+                <option>BTC/USDT</option>
+                <option>ETH/USDT</option>
+                <option>BNB/USDT</option>
+                <option>SOL/USDT</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">مقدار (تومان)</label>
+              <input type="text" class="form-input" id="buy-amount" placeholder="مبلغ خرید">
+              <span class="form-error" id="buy-amount-error">مبلغ نامعتبر</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">قیمت حد تعیین (اختیاری)</label>
+              <input type="text" class="form-input" id="buy-price" placeholder="قیمت حد تعیین">
+            </div>
+            <div class="form-group">
+              <label class="form-label">نوع دستور</label>
+              <select class="form-input" id="buy-type">
+                <option>حد ضرر (Limit)</option>
+                <option>سفارش بازار (Market)</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="submitOrder('buy')">خرید</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">فروش ارز دیجیتال</span>
+            <span class="live-dot"></span>
+          </div>
+          <div class="order-form">
+            <div class="form-group">
+              <label class="form-label">جفت معامله</label>
+              <select class="form-input" id="sell-pair">
+                <option>BTC/USDT</option>
+                <option>ETH/USDT</option>
+                <option>BNB/USDT</option>
+                <option>SOL/USDT</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">مقدار (تومان)</label>
+              <input type="text" class="form-input" id="sell-amount" placeholder="مبلغ فروش">
+              <span class="form-error" id="sell-amount-error">مبلغ نامعتبر</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">قیمت حد تعیین (اختیاری)</label>
+              <input type="text" class="form-input" id="sell-price" placeholder="قیمت حد تعیین">
+            </div>
+            <div class="form-group">
+              <label class="form-label">نوع دستور</label>
+              <select class="form-input" id="sell-type">
+                <option>حد ضرر (Limit)</option>
+                <option>سفارش بازار (Market)</option>
+              </select>
+            </div>
+            <button class="btn btn-danger" style="width:100%;padding:12px;" onclick="submitOrder('sell')">فروش</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">لیست بازارها</span></div>
+        <div id="market-list"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-wallet">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">موجودی کل</div>
+          <div class="stat-value">۱۲۵,۴۳۰,۰۰۰ تومان</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">سود/زیان امروز</div>
+          <div class="stat-value" style="color:var(--green);">+۳,۲۴۰,۰۰۰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">ارزهای ذخیره شده</div>
+          <div class="stat-value">۷</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div class="card">
+          <div class="card-header"><span class="card-title">موجودی‌ها</span></div>
+          <div id="wallet-balances"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">تحویل وجه</span></div>
+          <div class="order-form">
+            <div class="form-group">
+              <label class="form-label">نوع</label>
+              <select class="form-input"><option>واریز به کیف پول</option><option>برداشت از کیف پول</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">آدرس کیف پول</label>
+              <input type="text" class="form-input" placeholder="آدرس مقصد">
+            </div>
+            <div class="form-group">
+              <label class="form-label">مبلغ</label>
+              <input type="text" class="form-input" placeholder="مبلغ">
+            </div>
+            <button class="btn btn-primary" onclick="showToast('درخواست تحویل ارسال شد')">ارسال</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin">
+      <h2 style="margin-bottom:20px;">پنل مدیریت — حمید حاجی اسفندیاری</h2>
+      <div class="admin-grid">
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">کاربران ثبت‌نام شده</div>
+            <div class="admin-stat-value">۱۲,۴۸۹</div>
+          </div>
+          <div class="admin-stat-icon" style="background:var(--accent-dim);color:var(--accent);">👥</div>
+        </div>
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">کاربران فعال امروز</div>
+            <div class="admin-stat-value">۳,۸۴۷</div>
+          </div>
+          <div class="admin-stat-icon" style="background:rgba(0,212,170,0.1);color:#00d4aa;">🟢</div>
+        </div>
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">معاملات امروز</div>
+            <div class="admin-stat-value">۸,۲۹۱</div>
+          </div>
+          <div class="admin-stat-icon" style="background:rgba(255,165,2,0.15);color:#ffa502;">📊</div>
+        </div>
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">خزانه صرافی</div>
+            <div class="admin-stat-value">۲.۴B</div>
+          </div>
+          <div class="admin-stat-icon" style="background:var(--danger-dim);color:var(--danger);">🏦</div>
+        </div>
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">سقف برداشت ۲۴h</div>
+            <div class="admin-stat-value">۸۵۰M</div>
+          </div>
+          <div class="admin-stat-icon" style="background:rgba(0,212,170,0.1);color:var(--accent);">💸</div>
+        </div>
+        <div class="admin-stat">
+          <div>
+            <div class="admin-stat-label">نرخ کارمزد فعلی</div>
+            <div class="admin-stat-value">۰.۱٪</div>
+          </div>
+          <div class="admin-stat-icon" style="background:rgba(255,165,2,0.15);color:#ffa502;">⚙️</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><span class="card-title">مدیریت درگاه‌های پرداخت</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>درگاه</th><th>ارز</th><th>وضعیت</th><th>نرخ کارمزد</th><th>عملیات</th></tr></thead>
+            <tbody>
+              <tr><td>پرداخت آنلاین ۱</td><td>USDT</td><td><span class="status-dot active"></span> فعال</td><td>۰.۱٪</td><td><button class="btn btn-outline btn-sm">ویرایش</button></td></tr>
+              <tr><td>درگاه نوبیتکس</td><td>Toman</td><td><span class="status-dot active"></span> فعال</td><td>۰.۱۵٪</td><td><button class="btn btn-outline btn-sm">ویرایش</button></td></tr>
+              <tr><td>ریپلی‌پی</td><td>USDT</td><td><span class="status-dot active"></span> فعال</td><td>۰.۱٪</td><td><button class="btn btn-outline btn-sm">ویرایش</button></td></tr>
+              <tr><td>زرین‌پال</td><td>BTC</td><td><span class="status-dot inactive"></span> غیرفعال</td><td>۰.۲٪</td><td><button class="btn btn-outline btn-sm">فعال‌سازی</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">تنظیمات سیستم</span></div>
+        <div class="order-form">
+          <div class="form-group">
+            <label class="form-label">نرخ کارمزد پیش‌فرض</label>
+            <input type="text" class="form-input" value="0.1%">
+          </div>
+          <div class="form-group">
+            <label class="form-label">سقف برداشت روزانه (تومان)</label>
+            <input type="text" class="form-input" value="500,000,000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">حداقل واریز</label>
+            <input type="text" class="form-input" value="100,000">
+          </div>
+          <button class="btn btn-primary" onclick="showToast('تنظیمات با موفقیت ذخیره شد')">ذخیره تغییرات</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-users">
+      <h2 style="margin-bottom:20px;">مدیریت کاربران</h2>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">لیست کاربران</span>
+          <input type="text" class="form-input" style="width:240px;" placeholder="جستجوی کاربر...">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>کاربر</th><th>شماره تماس</th><th>سطح دسترسی</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar">ح‌ح</div><div><div style="font-weight:600;">حمید حاجی اسفندیاری</div><div style="font-size:11px;color:var(--text-muted);">hamid.hajiesf@gmail.com</div></div></div></td>
+                <td>۰۹۱۲-XXX-XXXX</td>
+                <td><span class="admin-badge">مدیر ارشد</span></td>
+                <td><span class="status-dot active"></span> فعال</td>
+                <td><button class="btn btn-outline btn-sm">ویرایش</button></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar">م‌م</div><div><div style="font-weight:600;">مریم رضایی</div><div style="font-size:11px;color:var(--text-muted);">m.razavi@example.com</div></div></div></td>
+                <td>۰۹۳۵-XXX-XXXX</td>
+                <td>کاربر عادی</td>
+                <td><span class="status-dot active"></span> فعال</td>
+                <td><button class="btn btn-outline btn-sm">ویرایش</button></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar">ا‌ا</div><div><div style="font-weight:600;">علی احمدی</div><div style="font-size:11px;color:var(--text-muted);">ali.ahmadi@example.com</div></div></div></td>
+                <td>۰۹۳۶-XXX-XXXX</td>
+                <td>کاربر عادی</td>
+                <td><span class="status-dot inactive"></span> غیرفعال</td>
+                <td><button class="btn btn-outline btn-sm">ویرایش</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-settings">
+      <h2 style="margin-bottom:20px;">تنظیمات سیستم</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-title">اطلاعات پروفایل</span></div>
+        <div class="order-form">
+          <div class="form-group">
+            <label class="form-label">نام مدیر</label>
+            <input type="text" class="form-input" value="حمید حاجی اسفندیاری">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ایمیل</label>
+            <input type="text" class="form-input" value="hamid.hajiesf@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">شماره تماس</label>
+            <input type="text" class="form-input" value="+98 912 XXX XXXX">
+          </div>
+          <button class="btn btn-primary" onclick="showToast('پروفایل با موفقیت بروزرسانی شد')">بروزرسانی</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">امنیت</span></div>
+        <div class="order-form">
+          <div class="form-group">
+            <label class="form-label">تغییر رمز عبور</label>
+            <input type="password" class="form-input" placeholder="رمز عبور فعلی">
+          </div>
+          <div class="form-group">
+            <label class="form-label">رمز عبور جدید</label>
+            <input type="password" class="form-input" placeholder="رمز عبور جدید">
+          </div>
+          <button class="btn btn-primary" onclick="showToast('رمز عبور با موفقیت تغییر یافت')">تغییر رمز</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-history">
+      <h2 style="margin-bottom:20px;">تاریخچه معاملات</h2>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">فیلتر</span>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm">امروز</button>
+            <button class="btn btn-outline btn-sm">هفته</button>
+            <button class="btn btn-outline btn-sm">ماه</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>تاریخ</th><th>نوع</th><th>جفت</th><th>مقدار</th><th>قیمت</th><th>مبلغ کل</th><th>وضعیت</th></tr></thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">📰 اخبار فوری</div>
+      <div style="font-size:13px; color:var(--text-secondary); padding:0 12px;">
+        <div style="padding:10px;background:var(--bg-secondary);border-radius:8px;margin-bottom:8px;">
+          <div style="font-weight:600;margin-bottom:4px;">BTC بالای ۶۷ میلیون تومان</div>
+          <div style="font-size:11px;color:var(--text-muted);">۲ دقیقه پیش</div>
+        </div>
+        <div style="padding:10px;background:var(--bg-secondary);border-radius:8px;margin-bottom:8px;">
+          <div style="font-weight:600;margin-bottom:4px;">ETH مقاومت ۳.۹ میلیون شکست</div>
+          <div style="font-size:11px;color:var(--text-muted);">۱۵ دقیقه پیش</div>
+        </div>
+        <div style="padding:10px;background:var(--bg-secondary);border-radius:8px;">
+          <div style="font-weight:600;margin-bottom:4px;">بلاک‌چین نوبیتکس آپدیت جدید</div>
+          <div style="font-size:11px;color:var(--text-muted);">۱ ساعت پیش</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">🎯 دسته‌بندی‌ها</div>
+      <div style="font-size:13px; color:var(--text-secondary); padding:0 12px;">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span>🔵 پرداخت</span><span style="color:var(--accent);">۴۸</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span>🟢 بازار</span><span style="color:var(--accent);">۳۲</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span>🟡 کیف پول</span><span style="color:var(--accent);">۱۸</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;">
+          <span>🔴 گزارش‌گیری</span><span style="color:var(--accent);">۱۲</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-item').forEach(function(i) { i.classList.remove('active'); });
+  document.getElementById('page-' + pageId).classList.add('active');
+  var labelMap = {dashboard:'داشبورد',trade:'بازار',wallet:'کیف پول',admin:'پنل مدیریت',users:'مدیریت کاربران',settings:'تنظیمات',history:'تاریخچه'};
+  document.querySelectorAll('.sidebar-item').forEach(function(item) {
+    if(item.textContent.indexOf(labelMap[pageId] || pageId) !== -1) {
+      item.classList.add('active');
+    }
+  });
+  if(pageId === 'dashboard') buildChart();
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function submitOrder(type) {
+  var amountId = type === 'buy' ? 'buy-amount' : 'sell-amount';
+  var amount = document.getElementById(amountId).value;
+  var errorId = type === 'buy' ? 'buy-amount-error' : 'sell-amount-error';
+  var errEl = document.getElementById(errorId);
+  if(!amount || isNaN(amount) || Number(amount) <= 0) {
+    errEl.classList.add('show');
+    document.getElementById(amountId).classList.add('error');
+    return;
+  }
+  errEl.classList.remove('show');
+  document.getElementById(amountId).classList.remove('error');
+  showToast('سفارش ' + (type === 'buy' ? 'خرید' : 'فروش') + ' ثبت شد ✅');
+  document.getElementById(amountId).value = '';
+}
+
+function buildChart() {
+  var chart = document.getElementById('chart-btc');
+  if(!chart || chart.children.length > 0) return;
+  var bars = 48;
+  for(var i = 0; i < bars; i++) {
+    var bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = (Math.random() * 80 + 20) + '%';
+    chart.appendChild(bar);
+  }
+}
+
+function renderQuickPrices() {
+  var prices = [
+    {pair:'BTC/USDT', price:'۶۷,۴۲۰,۰۰۰', change:'+1.2%', up:true},
+    {pair:'ETH/USDT', price:'۳,۸۵۰,۰۰۰', change:'+0.8%', up:true},
+    {pair:'BNB/USDT', price:'۵۲۰,۰۰۰', change:'-0.3%', up:false},
+    {pair:'SOL/USDT', price:'۱۴۵,۰۰۰', change:'+3.1%', up:true},
+    {pair:'XRP/USDT', price:'۶۲,۵۰۰', change:'+0.5%', up:true},
+    {pair:'ADA/USDT', price:'۱۲,۳۰۰', change:'-1.1%', up:false},
+  ];
+  var container = document.getElementById('quick-prices');
+  container.innerHTML = prices.map(function(p) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">' +
+      '<span class="market-pair">' + p.pair + '</span>' +
+      '<div style="text-align:left;">' +
+        '<div class="market-price">' + p.price + '</div>' +
+        '<div class="market-change ' + (p.up?'up':'down') + '">' + p.change + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderMarketList() {
+  var markets = [
+    {pair:'BTC/USDT', price:'۶۷,۴۲۰,۰۰۰', change:'+1.2%', vol:'۲.۴B', up:true},
+    {pair:'ETH/USDT', price:'۳,۸۵۰,۰۰۰', change:'+0.8%', vol:'۱.۸B', up:true},
+    {pair:'BNB/USDT', price:'۵۲۰,۰۰۰', change:'-0.3%', vol:'۴۵۰M', up:false},
+    {pair:'SOL/USDT', price:'۱۴۵,۰۰۰', change:'+3.1%', vol:'۳۲۰M', up:true},
+    {pair:'XRP/USDT', price:'۶۲,۵۰۰', change:'+0.5%', vol:'۲۱۰M', up:true},
+    {pair:'ADA/USDT', price:'۱۲,۳۰۰', change:'-1.1%', vol:'۱۸۰M', up:false},
+    {pair:'DOGE/USDT', price:'۲۸,۵۰۰', change:'+2.4%', vol:'۹۵M', up:true},
+    {pair:'DOT/USDT', price:'۳۴,۲۰۰', change:'-0.7%', vol:'۶۷M', up:false},
+  ];
+  var container = document.getElementById('market-list');
+  container.innerHTML = markets.map(function(m) {
+    return '<div class="market-row">' +
+      '<div>' +
+        '<span class="market-pair">' + m.pair + '</span>' +
+        '<span style="font-size:11px;color:var(--text-muted);margin-right:8px;">حجم: ' + m.vol + '</span>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:16px;">' +
+        '<span class="market-price">' + m.price + '</span>' +
+        '<span class="market-change ' + (m.up?'up':'down') + '">' + m.change + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderRecentTrades() {
+  var trades = [
+    {id:'#TR-48291', type:'خريد', pair:'BTC/USDT', amount:'0.05', price:'۶۷,۴۲۰,۰۰۰', status:'تکمیل شد'},
+    {id:'#TR-48290', type:'فروش', pair:'ETH/USDT', amount:'2.5', price:'۳,۸۵۰,۰۰۰', status:'تکمیل شد'},
+    {id:'#TR-48289', type:'خريد', pair:'SOL/USDT', amount:'10', price:'۱۴۵,۰۰۰', status:'در انتظار'},
+    {id:'#TR-48288', type:'فروش', pair:'BNB/USDT', amount:'50', price:'۵۲۰,۰۰۰', status:'تکمیل شد'},
+    {id:'#TR-48287', type:'خريد', pair:'BTC/USDT', amount:'0.02', price:'۶۷,۴۱۰,۰۰۰', status:'تکمیل شد'},
+  ];
+  var tbody = document.getElementById('recent-trades');
+  tbody.innerHTML = trades.map(function(t) {
+    var color = t.type==='خريد' ? 'var(--green)' : 'var(--red)';
+    var statusColor = t.status==='تکمیل شد' ? 'var(--green)' : 'var(--warning)';
+    return '<tr>' +
+      '<td class="font-mono" style="font-size:12px;">' + t.id + '</td>' +
+      '<td style="color:' + color + ';">' + t.type + '</td>' +
+      '<td>' + t.pair + '</td>' +
+      '<td>' + t.amount + '</td>' +
+      '<td class="font-mono">' + t.price + '</td>' +
+      '<td><span style="color:' + statusColor + ';">' + t.status + '</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderWallet() {
+  var wallets = [
+    {coin:'BTC', balance:'0.423', value:'۲۸,۵۰۰,۰۰۰', change:'+2.1%', up:true},
+    {coin:'ETH', balance:'3.85', value:'۱۴,۸۲۲,۵۰۰', change:'+0.8%', up:true},
+    {coin:'USDT', balance:'۱۵۰,۰۰۰', value:'۱۵۰,۰۰۰', change:'0%', up:true},
+    {coin:'BNB', balance:'45.2', value:'۲۳,۴۰۰,۰۰۰', change:'-0.3%', up:false},
+    {coin:'SOL', balance:'120', value:'۱۷,۴۰۰,۰۰۰', change:'+3.1%', up:true},
+    {coin:'XRP', balance:'5,200', value:'۳۲۴,۵۰۰', change:'+0.5%', up:true},
+    {coin:'ADA', balance:'10,000', value:'۱۲۳,۰۰۰', change:'-1.1%', up:false},
+  ];
+  var container = document.getElementById('wallet-balances');
+  container.innerHTML = wallets.map(function(w) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">' +
+      '<div>' +
+        '<div style="font-weight:600;">' + w.coin + '</div>' +
+        '<div style="font-size:12px;color:var(--text-muted);">' + w.balance + ' ' + w.coin + '</div>' +
+      '</div>' +
+      '<div style="text-align:left;">' +
+        '<div class="font-mono" style="font-size:13px;">' + w.value + '</div>' +
+        '<div class="market-change ' + (w.up?'up':'down') + '" style="font-size:11px;">' + w.change + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderHistory() {
+  var history = [
+    {date:'۲۰۲۶/۰۹/۱۶ ۱۴:۳۲', type:'خريد', pair:'BTC/USDT', amount:'0.05', price:'۶۷,۴۲۰,۰۰۰', total:'۳,۳۷۱,۰۰۰', status:'تکمیل'},
+    {date:'۲۰۲۶/۰۹/۱۶ ۱۲:۱۵', type:'فروش', pair:'ETH/USDT', amount:'1.5', price:'۳,۸۴۵,۰۰۰', total:'۵,۷۶۷,۵۰۰', status:'تکمیل'},
+    {date:'۲۰۲۶/۰۹/۱۵ ۱۸:۴۵', type:'خريد', pair:'SOL/USDT', amount:'20', price:'۱۴۳,۰۰۰', total:'۲,۸۶۰,۰۰۰', status:'تکمیل'},
+    {date:'۲۰۲۶/۰۹/۱۵ ۱۰:۲۰', type:'برداشت', pair:'USDT', amount:'۵۰۰,۰۰۰', price:'—', total:'۵۰۰,۰۰۰', status:'تکمیل'},
+    {date:'۲۰۲۶/۰۹/۱۴ ۲۲:۱۰', type:'واریز', pair:'Toman', amount:'۱۰,۰۰۰,۰۰۰', price:'—', total:'۱۰,۰۰۰,۰۰۰', status:'تکمیل'},
+    {date:'۲۰۲۶/۰۹/۱۴ ۱۵:۳۰', type:'فروش', pair:'BTC/USDT', amount:'0.01', price:'۶۷,۳۰۰,۰۰۰', total:'۶۷۳,۰۰۰', status:'تکمیل'},
+  ];
+  var tbody = document.getElementById('history-tbody');
+  tbody.innerHTML = history.map(function(h) {
+    var typeColor = h.type==='خريد' ? 'var(--green)' : h.type==='فروش' ? 'var(--red)' : 'var(--accent)';
+    return '<tr>' +
+      '<td style="font-size:12px;">' + h.date + '</td>' +
+      '<td style="color:' + typeColor + ';">' + h.type + '</td>' +
+      '<td>' + h.pair + '</td>' +
+      '<td>' + h.amount + '</td>' +
+      '<td class="font-mono" style="font-size:12px;">' + h.price + '</td>' +
+      '<td class="font-mono" style="font-size:12px;">' + h.total + '</td>' +
+      '<td style="color:var(--green);font-size:12px;">' + h.status + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function simulatePrices() {
+  setInterval(function() {
+    document.querySelectorAll('.market-price').forEach(function(el) {
+      var num = parseFloat(el.textContent.replace(/[^\d.]/g, ''));
+      if(!isNaN(num) && num > 0) {
+        var change = (Math.random() - 0.5) * 0.002;
+        var newVal = num * (1 + change);
+        el.textContent = newVal.toLocaleString('fa-IR');
+      }
+    });
+  }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildChart();
+  renderQuickPrices();
+  renderMarketList();
+  renderRecentTrades();
+  renderWallet();
+  renderHistory();
+  simulatePrices();
+});
+</script>
+</body>
+</html>

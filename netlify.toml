@@ -9,6 +9,19 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    Cache-Control = "public, max-age=300, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/health"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex"
 
 [[redirects]]
   from = "/*"

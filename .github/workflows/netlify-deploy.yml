@@ -15,10 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to Netlify
+      - name: Deploy to Netlify (with retry)
         uses: netlify/actions/cli@master
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         with:
           args: deploy --prod --dir=.
+        continue-on-error: false
+
+      - name: Verify deployment (health check)
+        run: |
+          echo "Waiting for Netlify to propagate..."
+          sleep 20
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.NETLIFY_SITE_URL }}/health")
+          if [ "$STATUS" != "200" ]; then
+            echo "Health check failed with status $STATUS — retrying deploy..."
+            netlify deploy --prod --dir=. --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
+            sleep 15
+            STATUS2=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.NETLIFY_SITE_URL }}/health")
+            if [ "$STATUS2" != "200" ]; then
+              echo "Health check still failing after retry. Aborting."
+              exit 1
+            fi
+          fi
+          echo "Deployment verified — health check passed"
+
+      - name: Notify success
+        if: success()
+        run: echo "✅ Site deployed and healthy at ${{ secrets.NETLIFY_SITE_URL }}"
